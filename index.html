@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Arena Shooter</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="hud">
+  <div id="screen-fx"></div>
+
+  <div id="crosshair">
+    <div id="hit-marker"></div>
+  </div>
+
+  <div id="hit-flash-vignette"></div>
+
+  <div id="enemy-health-hud" class="health-hud">
+    <div class="health-label">ENEMY</div>
+    <div class="health-bar"><div id="enemy-health-fill" class="health-fill"></div></div>
+  </div>
+
+  <div id="player-health-hud" class="health-hud">
+    <div class="health-label">HEALTH</div>
+    <div class="health-bar"><div id="player-health-fill" class="health-fill"></div></div>
+  </div>
+
+  <div id="hit-counter">Hits: 0</div>
+
+  <div id="controls-hint">&#8593;&#8595; Move &nbsp; &#8592;&#8594; Turn &nbsp; Space Shoot</div>
+
+  <div id="overlay">
+    <div id="overlay-title">GAME OVER</div>
+    <button id="restart-btn">Restart</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

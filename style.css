@@ -1,0 +1,331 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --accent: #35e2ff;
+  --accent-soft: rgba(53, 226, 255, 0.35);
+  --danger: #ff3b4e;
+  --danger-soft: rgba(255, 59, 78, 0.4);
+  --good: #35ff9c;
+  --warn: #ffcc33;
+  --panel-bg: rgba(8, 14, 20, 0.55);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Rajdhani", "Segoe UI", Arial, sans-serif;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+#app canvas {
+  display: block;
+}
+
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- Ambient screen dressing ---------- */
+
+#screen-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+#screen-fx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/* ---------- Crosshair ---------- */
+
+#crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 4px var(--accent-soft));
+  transition: transform 0.08s ease-out;
+}
+
+#crosshair.pulse {
+  animation: crosshair-pulse 0.12s ease-out;
+}
+
+@keyframes crosshair-pulse {
+  0% { transform: translate(-50%, -50%) scale(1.35); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+#crosshair::before {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 7px;
+  transform: translateX(-50%);
+  box-shadow: 0 15px 0 0 var(--accent);
+}
+
+#crosshair::after {
+  top: 50%;
+  left: 0;
+  height: 2px;
+  width: 7px;
+  transform: translateY(-50%);
+  box-shadow: 15px 0 0 0 var(--accent);
+}
+
+#hit-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%) scale(0.5) rotate(45deg);
+  opacity: 0;
+}
+
+#hit-marker::before,
+#hit-marker::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  box-shadow: 0 0 6px 1px #fff;
+}
+
+#hit-marker::before {
+  left: 50%;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+#hit-marker::after {
+  top: 50%;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+#hit-marker.show {
+  animation: hit-marker-pop 0.28s ease-out;
+}
+
+@keyframes hit-marker-pop {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6) rotate(45deg); }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(45deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.3) rotate(45deg); }
+}
+
+/* ---------- Damage vignette ---------- */
+
+#hit-flash-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0) 50%, rgba(220, 0, 20, 0.6) 100%);
+  opacity: 0;
+}
+
+#hit-flash-vignette.flash {
+  animation: vignette-flash 0.4s ease-out;
+}
+
+@keyframes vignette-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------- Health panels ---------- */
+
+.health-hud {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 240px;
+  padding: 10px 14px;
+  background: var(--panel-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+  backdrop-filter: blur(2px);
+}
+
+#player-health-hud {
+  left: 24px;
+  bottom: 24px;
+  border-left: 2px solid var(--accent);
+}
+
+#enemy-health-hud {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  width: 280px;
+  border-bottom: 2px solid var(--danger);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
+}
+
+.health-label {
+  color: #dff6ff;
+  font-family: "Orbitron", "Rajdhani", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px rgba(53, 226, 255, 0.5);
+}
+
+#enemy-health-hud .health-label {
+  color: #ffe3e6;
+  text-shadow: 0 0 6px rgba(255, 59, 78, 0.6);
+}
+
+.health-bar {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.health-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #17c2a4, var(--good));
+  box-shadow: 0 0 10px 0 rgba(53, 255, 156, 0.7);
+  transition: width 0.15s linear, background 0.15s linear, box-shadow 0.15s linear;
+}
+
+/* ---------- Hit counter ---------- */
+
+#hit-counter {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  padding: 8px 16px;
+  background: var(--panel-bg);
+  border-right: 2px solid var(--accent);
+  clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+  color: #dff6ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+#controls-hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(223, 246, 255, 0.6);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- Overlay ---------- */
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  background: radial-gradient(ellipse at center, rgba(6, 10, 16, 0.75) 0%, rgba(2, 4, 8, 0.92) 100%);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease;
+}
+
+#overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#overlay.visible #overlay-title {
+  animation: title-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes title-in {
+  0% { opacity: 0; transform: scale(0.85) translateY(10px); letter-spacing: 12px; }
+  100% { opacity: 1; transform: scale(1) translateY(0); letter-spacing: 6px; }
+}
+
+#overlay-title {
+  font-family: "Orbitron", sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: var(--danger);
+  text-shadow: 0 0 18px currentColor, 0 0 40px currentColor, 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+#restart-btn {
+  pointer-events: auto;
+  padding: 14px 40px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #0a1418;
+  background: var(--accent);
+  border: none;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  cursor: pointer;
+  box-shadow: 0 0 18px var(--accent-soft);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+#restart-btn:hover {
+  background: #7cf1ff;
+  box-shadow: 0 0 26px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+#restart-btn:active {
+  transform: translateY(0);
+}
