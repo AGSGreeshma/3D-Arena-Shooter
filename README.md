@@ -41,12 +41,25 @@ python -m http.server
 
 Then open the printed local URL (e.g. `http://localhost:3000`) in your browser.
 
+### Deploying with Streamlit
+
+The game is a static site, but [`streamlit_app.py`](streamlit_app.py) lets you host and share it via [Streamlit Community Cloud](https://streamlit.io/cloud) (which only runs Python apps). It reads `index.html`, `style.css` and `js/*.js` at runtime and embeds them as a self-contained page in a Streamlit component — the `js/` files stay the single source of truth, nothing is duplicated in Python.
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+To deploy: push this repo to GitHub, then create a new app on [share.streamlit.io](https://share.streamlit.io) pointing at `streamlit_app.py`.
+
 ## Project Structure
 
 ```
 3d Shooter game/
 ├── index.html          # Page shell, HUD markup, import map, font/CDN links
 ├── style.css            # HUD styling (health bars, crosshair, overlays, effects)
+├── streamlit_app.py      # Streamlit entry point that embeds the static game
+├── requirements.txt       # Python dependency for streamlit_app.py
 └── js/
     ├── main.js            # Renderer/scene/camera setup, bloom pipeline, game loop
     ├── config.js           # Tunable constants (speeds, damage, cooldowns, arena layout)
